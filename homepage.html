@@ -107,111 +107,18 @@
 </style>
 </head>
 <body>
-	<div th:replace="fragments/header"></div>
-	<div class="container content">
-		<div class="row">
-			<div class="col-md-6">
-				<div class="box">
-					<h2>Latest Scam Report</h2>
-					<div id="scam-news">Loading latest scam news...</div>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="box">
-					<h2>Top scams this week</h2>
-					<div id="top-scams">Loading top scams...</div>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-12">
-				<div class="chat-container">
-					<div class="chat-header">
-						<h2>Scam Predictor Bot</h2>
-					</div>
-					<div class="chat-body" id="chat-body">
-						<div class="chat-message bot">
-							<p>Hi there! How can I help?</p>
-						</div>
-						<div th:if="${response}">
-							<div class="chat-message bot">
-								<p th:text="${response}">Response from server</p>
-							</div>
-						</div>
-					</div>
-					<div class="chat-footer">
-						<form id="uploadForm" method="post" enctype="multipart/form-data"
-							th:action="@{/uploadFile}"
-							style="display: flex; align-items: center; width: 100%;">
-							<input type="hidden" name="_csrf" th:value="${_csrf.token}" /> <label
-								for="imageInput" class="upload-label"> <img
-								src="/images/paperclip-icon.png" alt="Upload"
-								class="upload-icon" style="height: 24px; cursor: pointer;">
-							</label> <input type="file" id="imageInput" name="image" accept="image/*"
-								style="display: none;"> <input type="text"
-								id="textInput" name="text"
-								placeholder="Type your message here..."
-								style="flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-right: 10px;">
-							<button type="submit" id="sendBtn">Send</button>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div th:replace="fragments/footer"></div>
-	<script>
-        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const fileInput = document.getElementById('imageInput');
-            const textInput = document.getElementById('textInput');
-            const chatBody = document.getElementById('chat-body');
-            if (fileInput.files.length === 0 && textInput.value.trim() === "") {
-                alert("Please enter a message or select an image to upload.");
-                return;
-            }
-            const formData = new FormData();
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                formData.append('image', file);
-                const userMessage = document.createElement('div');
-                userMessage.classList.add('chat-message', 'user');
-                userMessage.innerHTML = `<p>${textInput.value.trim()}</p><img src="${URL.createObjectURL(file)}" alt="Uploaded image" style="max-width: 100%; height: auto; margin-top: 10px;">`;
-                chatBody.appendChild(userMessage);
-            } else {
-                const userMessage = document.createElement('div');
-                userMessage.classList.add('chat-message', 'user');
-                userMessage.innerHTML = `<p>${textInput.value.trim()}</p>`;
-                chatBody.appendChild(userMessage);
-            }
-            formData.append('text', textInput.value.trim());
-            try {
-                const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-                const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-                const response = await fetch('/uploadFile', {
-                    method: 'POST',
-                    headers: {
-                        [csrfHeader]: csrfToken
-                    },
-                    body: formData
-                });
-                const data = await response.json();
-                const responseText = data.text || data.error || "No response";
-                let formattedResponse = responseText.replace(/\n/g, '<br>');
-                const botMessage = document.createElement('div');
-                botMessage.classList.add('chat-message', 'bot');
-                botMessage.innerHTML = `<p>${formattedResponse}</p>`;
-                chatBody.appendChild(botMessage);
-            } catch (error) {
-                console.error('Error:', error);
-                const botMessage = document.createElement('div');
-                botMessage.classList.add('chat-message', 'bot');
-                botMessage.innerHTML = `<p>Sorry, there was an error processing your request.</p>`;
-                chatBody.appendChild(botMessage);
-            }
-            textInput.value = "";
-            fileInput.value = "";
-        });
-    </script>
+    <div class="header">
+        <b>Republic Polytechnic SQL</b>
+    </div>
+
+    <div class="form-container">
+        <form>
+            <div class="form-group">
+                <label for="id" class="form-label">Enter your student ID:</label>
+                <input id="student_ID" class="form-control" type="number" th:field="*{id}" placeholder="Student ID">
+            </div>
+			<A HREF="form1.html">Lesson 1</A>
+        </form>
+    </div>
 </body>
 </html>
