@@ -1,0 +1,217 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Home</title>
+<link rel="stylesheet"
+	href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
+<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+<script
+	src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+<script src="/bootstrap/css/bootstrap.js"></script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<meta name="_csrf" th:content="${_csrf.token}" />
+<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+<style>
+.header, .footer {
+	background-color: #90ee90;
+	padding: 10px;
+	text-align: center;
+}
+
+.content {
+	padding: 20px;
+}
+
+.box {
+	background-color: #008000;
+	color: white;
+	padding: 20px;
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.chat-container {
+	max-width: 1000px;
+	height: 600px;
+	margin: 0 auto;
+	background-color: white;
+	padding: 20px;
+	border-radius: 10px;
+	border: 5px solid #ddd;
+	box-sizing: border-box; /* Add this line */
+}
+
+.chat-body {
+	padding: 20px;
+	height: 500px;
+	overflow-y: auto;
+}
+
+.chat-footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px;
+	border-top: 1px solid #ddd;
+	box-sizing: border-box;
+}
+
+.chat-footer label {
+	margin-right: 10px;
+}
+
+.chat-footer input[type="text"] {
+	flex-grow: 1;
+	padding: 10px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	margin-right: 10px;
+	box-sizing: border-box;
+}
+
+.chat-footer button {
+	padding: 10px 20px;
+	background: #007bff;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	flex-shrink: 0;
+}
+
+.chat-footer button:focus {
+	outline: none;
+}
+
+.chat-message p {
+	margin: 0;
+	padding: 10px;
+	border-radius: 10px;
+}
+
+.chat-message.bot p {
+	background: #f1f1f1;
+	color: #333;
+}
+
+.chat-message.user p {
+	background: #007bff;
+	color: white;
+	text-align: right;
+}
+</style>
+</head>
+<body>
+	<div th:replace="fragments/header"></div>
+	<div class="container content">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="box">
+					<h2>Latest Scam Report</h2>
+					<div id="scam-news">Loading latest scam news...</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="box">
+					<h2>Top scams this week</h2>
+					<div id="top-scams">Loading top scams...</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="chat-container">
+					<div class="chat-header">
+						<h2>Scam Predictor Bot</h2>
+					</div>
+					<div class="chat-body" id="chat-body">
+						<div class="chat-message bot">
+							<p>Hi there! How can I help?</p>
+						</div>
+						<div th:if="${response}">
+							<div class="chat-message bot">
+								<p th:text="${response}">Response from server</p>
+							</div>
+						</div>
+					</div>
+					<div class="chat-footer">
+						<form id="uploadForm" method="post" enctype="multipart/form-data"
+							th:action="@{/uploadFile}"
+							style="display: flex; align-items: center; width: 100%;">
+							<input type="hidden" name="_csrf" th:value="${_csrf.token}" /> <label
+								for="imageInput" class="upload-label"> <img
+								src="/images/paperclip-icon.png" alt="Upload"
+								class="upload-icon" style="height: 24px; cursor: pointer;">
+							</label> <input type="file" id="imageInput" name="image" accept="image/*"
+								style="display: none;"> <input type="text"
+								id="textInput" name="text"
+								placeholder="Type your message here..."
+								style="flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-right: 10px;">
+							<button type="submit" id="sendBtn">Send</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div th:replace="fragments/footer"></div>
+	<script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('imageInput');
+            const textInput = document.getElementById('textInput');
+            const chatBody = document.getElementById('chat-body');
+            if (fileInput.files.length === 0 && textInput.value.trim() === "") {
+                alert("Please enter a message or select an image to upload.");
+                return;
+            }
+            const formData = new FormData();
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                formData.append('image', file);
+                const userMessage = document.createElement('div');
+                userMessage.classList.add('chat-message', 'user');
+                userMessage.innerHTML = `<p>${textInput.value.trim()}</p><img src="${URL.createObjectURL(file)}" alt="Uploaded image" style="max-width: 100%; height: auto; margin-top: 10px;">`;
+                chatBody.appendChild(userMessage);
+            } else {
+                const userMessage = document.createElement('div');
+                userMessage.classList.add('chat-message', 'user');
+                userMessage.innerHTML = `<p>${textInput.value.trim()}</p>`;
+                chatBody.appendChild(userMessage);
+            }
+            formData.append('text', textInput.value.trim());
+            try {
+                const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+                const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+                const response = await fetch('/uploadFile', {
+                    method: 'POST',
+                    headers: {
+                        [csrfHeader]: csrfToken
+                    },
+                    body: formData
+                });
+                const data = await response.json();
+                const responseText = data.text || data.error || "No response";
+                let formattedResponse = responseText.replace(/\n/g, '<br>');
+                const botMessage = document.createElement('div');
+                botMessage.classList.add('chat-message', 'bot');
+                botMessage.innerHTML = `<p>${formattedResponse}</p>`;
+                chatBody.appendChild(botMessage);
+            } catch (error) {
+                console.error('Error:', error);
+                const botMessage = document.createElement('div');
+                botMessage.classList.add('chat-message', 'bot');
+                botMessage.innerHTML = `<p>Sorry, there was an error processing your request.</p>`;
+                chatBody.appendChild(botMessage);
+            }
+            textInput.value = "";
+            fileInput.value = "";
+        });
+    </script>
+</body>
+</html>
