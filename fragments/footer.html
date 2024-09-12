@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Translate Example</title>
+    <style>
+        .footer {
+            background-color: #7ed957;
+            height: 60px;
+            padding: 20px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .container {
+            padding-bottom: 140px;
+        }
+
+        .footer p {
+            margin: 0;
+        }
+
+        .trans {
+            display: flex;
+            align-items: center;
+        }
+
+        #google_translate_element {
+            margin-left: 5px;
+        }
+    </style>
+</head>
+
+<body>    
+    <div class="footer">
+        <p>&copy; All rights reserved BayMax4.0 2024</p>
+        <div class="trans">
+            <span>Translate:</span>
+            <div id="google_translate_element" style="display:inline-block;"></div>
+        </div>
+    </div>
+    
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'en,zh-CN,ta,ms',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+
+</html>
