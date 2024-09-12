@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Question</title>
+<link rel="stylesheet"
+	href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
+<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+	<h1> </h1>
+    <form>
+        <div class="mb-4 col-12"> 
+            <label for="Q1" class="form-label">Q1: Rachel wants to replenish her inventory of books so she asks you to write SQL to show the titles that are out of stock.</label>
+            <div>
+                <input id="Q1" class="form-control" type="text"
+                    th:field="*{title}">
+            </div>
+        </div>
+
+        <div class="mb-4 col-12"> 
+            <label for="Q2" class="form-label">Q2: She is thinking of sourcing for titles from non-USA based publishers. She needs to know the name and address of publishers located outside of USA so she can write to them.</label>
+            <div>
+                <input id="Q2" class="form-control" type="text"
+                    th:field="*{title}">
+            </div>
+        </div>
+
+        <div class="mb-4 col-12"> 
+            <label for="Q3" class="form-label">Q3: Rachel is considering expanding her inventory with non-English titles but feels customers are interested only in either audio or eBooks. To avoid ordering of similar titles, she requests a list of titles which are written not in English but are either audio or eBooks. Show the ISBN, title, language, and type in the list.</label>
+            <div>
+                <input id="Q3" class="form-control" type="text"
+                    th:field="*{title}">
+            </div>
+        </div>
+        
+        <div class="mb-4 col-12 d-flex justify-content-between">
+            <button type="submit" class="btn btn-success">Submit</button>
+        </div>
+	</form>
+</body>
+</html>
