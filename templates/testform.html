@@ -3,10 +3,33 @@
 <head>
     <title>Upload Excel Sheets</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+ .center1 {
+            margin: auto;
+            width: 50%;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            padding: 10px;
+        }
+        .center2 {
+            margin: auto;
+            width: 50%;
+            border-radius: 15px; /* Added px units */
+            padding: 10px;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        }
+        .center3 {
+            margin: auto;
+            width: 50%;
+         
+            padding: 10px;
+       
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h2 class="mb-4">Upload Excel Sheets for Grading</h2>
+    <div class="container mt-5 center2">
+        <h2 class="text-center mb-4">Upload Excel Sheets for Grading</h2>
+        <div class="center3">
         <form action="/" method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="studentans">Upload student answers:</label>
@@ -18,6 +41,7 @@
             </div>
             <button type="submit" class="btn btn-primary">Submit for Grading</button>
         </form>
+    </div>
     </div>
 </body>
 </html>
