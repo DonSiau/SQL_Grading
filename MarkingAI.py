@@ -60,12 +60,14 @@ def index():
 
 def process_and_mark_answers(stdans, suggestans):
     question_columns = [col for col in stdans.columns if col.startswith('Q')]
-    
+    submissionData_columns = ['Timestamp', 'Enter your class', 'Enter your ID']
     for col in question_columns:
         stdans[f'{col}_Mark'] = 0  
 
     for index, row in stdans.iterrows():
-        student_name = row['Name']
+        timestamp = row['Timestamp']
+        student_class = row['Enter your class']
+        student_ID=row['Enter your ID']
         for col in question_columns:
             answer = row[col]
             question_index = question_columns.index(col)
@@ -75,7 +77,7 @@ def process_and_mark_answers(stdans, suggestans):
     f"Suggested Answer: {suggested_answer},\n" 
     f"User Answer: {answer},\n\n" 
     "Evaluate the user's SQL answer based on the following criteria and be strict with it:\n"
-    "1. If the user's answer is correct synthetically or have the same output as the suggested answer , return a score of 2.\n"
+    "1. If the user's answer is correct synthetically and has the same output as the suggested answer , return a score of 2.\n"
     "2. If the user's answer is an attempt but has errors or is partially correct, return a score of 1.\n"
     "3. If the user's answer does not have any text written in the string, return a score of 0.\n"
     "4. If there is a comment, follow it when marking\n\n"
@@ -93,9 +95,11 @@ def process_and_mark_answers(stdans, suggestans):
                 stdans.at[index, f'{col}_Mark'] = mark
             except Exception as e:
                 stdans.at[index, f'{col}_Mark'] = -1  
-
+    spacer_col = ''
+    stdans[spacer_col] = ''
     mark_columns = [col for col in stdans.columns if col.endswith('_Mark')]
-    stdans['Total Mark'] = stdans[mark_columns].sum(axis=1)
+    stdans['total_marks'] = stdans[mark_columns].sum(axis=1)  
+    stdans = stdans[submissionData_columns+question_columns + [spacer_col] + mark_columns + ['total_marks']]
     return stdans
 
 if __name__ == '__main__':
