@@ -77,7 +77,8 @@ def process_and_mark_answers(stdans, suggestans):
     "Evaluate the user's SQL answer based on the following criteria and be strict with it:\n"
     "1. If the user's answer is correct synthetically or have the same output as the suggested answer , return a score of 2.\n"
     "2. If the user's answer is an attempt but has errors or is partially correct, return a score of 1.\n"
-    "3. If the user's answer does not have any text written in the string, return a score of 0.\n\n"
+    "3. If the user's answer does not have any text written in the string, return a score of 0.\n"
+    "4. If there is a comment, follow it when marking\n\n"
     "Only return the score (2, 1, or 0) without any additional text."  )
             payload = {
                 "model": "nousresearch/hermes-3-llama-3.1-405b",
@@ -91,7 +92,7 @@ def process_and_mark_answers(stdans, suggestans):
                 mark = int(result['choices'][0]['message']['content'].strip())
                 stdans.at[index, f'{col}_Mark'] = mark
             except Exception as e:
-                stdans.at[index, f'{col}_Mark'] = 9  
+                stdans.at[index, f'{col}_Mark'] = -1  
 
     mark_columns = [col for col in stdans.columns if col.endswith('_Mark')]
     stdans['Total Mark'] = stdans[mark_columns].sum(axis=1)
