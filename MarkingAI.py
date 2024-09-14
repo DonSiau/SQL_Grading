@@ -98,8 +98,8 @@ def process_and_mark_answers(stdans, suggestans):
                   stdans.at[index, f'{col}_Mark'] = mark
                   break
               except Exception as e:
-                  if attempt < retries - 1:  # If not the last attempt
-                        time.sleep(delay)  # Wait before retrying
+                  if attempt < retries - 1:  
+                        time.sleep(delay) 
                   stdans.at[index, f'{col}_Mark'] = -1  
     spacer_col = 'marked->'
     stdans[spacer_col] = ''
