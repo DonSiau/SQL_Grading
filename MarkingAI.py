@@ -105,6 +105,9 @@ def process_and_mark_answers(stdans, suggestans):
     stdans[spacer_col] = ''
     mark_columns = [col for col in stdans.columns if col.endswith('_Mark')]
     stdans['total_marks'] = stdans[mark_columns].sum(axis=1)  
+    stdans = stdans.rename(columns={'Timestamp':'Timestamp', 'Enter your class':'Class', 'Enter your ID':'ID'})
+    submissionData_columns = ['Timestamp', 'Class', 'ID']
+
     stdans = stdans[submissionData_columns+question_columns + [spacer_col] + mark_columns + ['total_marks']]
     return stdans
 
