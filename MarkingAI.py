@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import requests
 from flask import Flask, request, render_template, send_file
-
+import time
 app = Flask(__name__)
 
 
@@ -88,14 +88,20 @@ def process_and_mark_answers(stdans, suggestans):
                     {"role": "user", "content": prompt}
                 ]
             }
-            try:
-                response = requests.post(URL, json=payload, headers=HEADERS)
-                result = response.json()
-                mark = int(result['choices'][0]['message']['content'].strip())
-                stdans.at[index, f'{col}_Mark'] = mark
-            except Exception as e:
-                stdans.at[index, f'{col}_Mark'] = -1  
-    spacer_col = ''
+            retries=3
+            delay=2
+            for attempt in range(retries):
+              try:
+                  response = requests.post(URL, json=payload, headers=HEADERS)
+                  result = response.json()
+                  mark = int(result['choices'][0]['message']['content'].strip())
+                  stdans.at[index, f'{col}_Mark'] = mark
+                  break
+              except Exception as e:
+                  if attempt < retries - 1:  # If not the last attempt
+                        time.sleep(delay)  # Wait before retrying
+                  stdans.at[index, f'{col}_Mark'] = -1  
+    spacer_col = 'marked->'
     stdans[spacer_col] = ''
     mark_columns = [col for col in stdans.columns if col.endswith('_Mark')]
     stdans['total_marks'] = stdans[mark_columns].sum(axis=1)  
