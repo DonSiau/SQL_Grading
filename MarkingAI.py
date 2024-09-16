@@ -81,9 +81,10 @@ def process_and_mark_answers(stdans, suggestans):
     "2. If the user's answer is an attempt but has errors or is partially correct, return a score of 1.\n"
     "3. If the user's answer does not have any text written in the string, return a score of 0.\n"
     "4. If there is a comment, follow it when marking\n\n"
+    "5. If there are multiple queries in the suggested answer, then the user's answers should include those queries (whilst following the other rules of course)"
     "Only return the score (2, 1, or 0) without any additional text."  )
             payload = {
-                "model": "nousresearch/hermes-3-llama-3.1-405b",
+                "model": "nousresearch/hermes-3-llama-3.1-405b", #make sure to use an instruct model, not a chat model
                 "messages": [
                     {"role": "user", "content": prompt}
                 ]
