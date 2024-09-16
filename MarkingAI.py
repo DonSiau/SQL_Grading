@@ -25,13 +25,14 @@ HEADERS = {
 def index():
     if request.method == 'POST':
 
+        # Request for the uploaded file
         studentans = request.files['studentans']
         suggestedans = request.files['suggestedans']
         
         if studentans.filename == '' or suggestedans.filename == '':
             return "No selected file", 400
         
-
+        # Save the file requested into a holder
         studentans_filename = (studentans.filename)
         suggestedans_filename = (suggestedans.filename)
             
@@ -43,36 +44,51 @@ def index():
         # Process the uploaded Excel files
         stdans = pd.read_excel(studentans_path)
         suggestans = pd.read_excel(suggestedans_path)
-            
+        
+        #Run the marking AI 
         processed_df = process_and_mark_answers(stdans, suggestans)
 
-  
+        #Create a file with the marked infront
         output_filename = "marked_" + studentans_filename
         output_filepath = os.path.join(app.config['UPLOAD_FOLDER'], output_filename)
             
-       
+        # Change the file into excel sheet
         processed_df.to_excel(output_filepath, index=False)
 
-    
+        # Return the marked version of the Excel sheet
         return send_file(output_filepath, as_attachment=True)
            
     return render_template('testform.html')
 
+# Codes to run the AI process
 def process_and_mark_answers(stdans, suggestans):
+
+    #Find columns that has the questions
     question_columns = [col for col in stdans.columns if col.startswith('Q')]
+
+    #Add timestamp, student class and name column into the marked data
     submissionData_columns = ['Timestamp', 'Enter your class', 'Enter your ID']
+
+    #Create Column for marks
     for col in question_columns:
         stdans[f'{col}_Mark'] = 0  
+
 
     for index, row in stdans.iterrows():
         timestamp = row['Timestamp']
         student_class = row['Enter your class']
         student_ID=row['Enter your ID']
         for col in question_columns:
+            #Extract students answers  out
             answer = row[col]
+
+            #Extract the question out
             question_index = question_columns.index(col)
+
+            #Extract the suggested answers from the suggested answers excel sheet
             suggested_answer = suggestans.iloc[0, question_index]
             
+            #Prompt for the AI to check the answers
             prompt= ( 
     f"Suggested Answer: {suggested_answer},\n" 
     f"User Answer: {answer},\n\n" 
@@ -83,6 +99,8 @@ def process_and_mark_answers(stdans, suggestans):
     "4. If there is a comment, follow it when marking\n\n"
     "5. If there are multiple queries in the suggested answer, then the user's answers should include those queries (whilst following the other rules of course)"
     "Only return the score (2, 1, or 0) without any additional text."  )
+            
+            #Run the AI
             payload = {
                 "model": "nousresearch/hermes-3-llama-3.1-405b", #make sure to use an instruct model, not a chat model
                 "messages": [
@@ -91,6 +109,8 @@ def process_and_mark_answers(stdans, suggestans):
             }
             retries=3
             delay=2
+
+            #Let the AI do multiple runs to ensure everything is marked and if there is an error there will be a -1
             for attempt in range(retries):
               try:
                   response = requests.post(URL, json=payload, headers=HEADERS)
@@ -105,8 +125,13 @@ def process_and_mark_answers(stdans, suggestans):
     spacer_col = 'marked->'
     stdans[spacer_col] = ''
     mark_columns = [col for col in stdans.columns if col.endswith('_Mark')]
+    #Adding of the marks to get the total mark
     stdans['total_marks'] = stdans[mark_columns].sum(axis=1)  
+
+    #Renaming of the columns
     stdans = stdans.rename(columns={'Timestamp':'Timestamp', 'Enter your class':'Class', 'Enter your ID':'ID'})
+
+    #Return of the final data
     submissionData_columns = ['Timestamp', 'Class', 'ID']
 
     stdans = stdans[submissionData_columns+question_columns + [spacer_col] + mark_columns + ['total_marks']]
