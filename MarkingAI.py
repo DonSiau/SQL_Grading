@@ -3,11 +3,12 @@ import pandas as pd
 import requests
 from flask import Flask, request, render_template, send_file, flash
 import time
+import openpyxl
+from openpyxl.utils.dataframe import dataframe_to_rows
+from openpyxl.styles import numbers
 
 app = Flask(__name__)
 app.secret_key = "secret_key"  # Required to use Flask's flash messaging
-
-#Test
 
 # Use absolute path for UPLOAD_FOLDER
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
@@ -15,7 +16,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 URL = "https://openrouter.ai/api/v1/chat/completions"
 HEADERS = {
-    "Authorization": f"Bearer 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",
+    "Authorization": f"Bearer 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", #School should use their own API key
     "Content-Type": "application/json"
 }
 
@@ -65,8 +66,20 @@ def index():
         output_filename = "marked_" + studentans_filename.rsplit('.', 1)[0] + ".xlsx"
         output_filepath = os.path.join(app.config['UPLOAD_FOLDER'], output_filename)
             
-        # Change the file into an Excel sheet
-        processed_df.to_excel(output_filepath, index=False)
+        # Create a new workbook and add the data
+        wb = openpyxl.Workbook()
+        ws = wb.active
+
+        for r in dataframe_to_rows(processed_df, index=False, header=True):
+            ws.append(r)
+
+        # Format the 'Total Score %' column as percentage
+        total_score_col = processed_df.columns.get_loc('Total Score %') + 1  # +1 because openpyxl uses 1-based indexing
+        for cell in ws[openpyxl.utils.get_column_letter(total_score_col)][1:]:
+            cell.number_format = numbers.FORMAT_PERCENTAGE_00
+
+        # Save the formatted Excel file
+        wb.save(output_filepath)
 
         # Return the marked version of the Excel sheet
         return send_file(output_filepath, as_attachment=True)
@@ -118,7 +131,7 @@ def process_and_mark_answers(stdans, suggestans):
             
             # Run the AI
             payload = {
-                "model": "nousresearch/hermes-3-llama-3.1-405b",  # Make sure to use an instruct model, not a chat model
+                "model": "nousresearch/hermes-3-llama-3.1-405b",  # Make sure to use an instruct model, not a chat model https://openrouter.ai/
                 "messages": [
                     {"role": "user", "content": prompt}
                 ]
@@ -148,7 +161,7 @@ def process_and_mark_answers(stdans, suggestans):
     stdans['total_marks'] = stdans[mark_columns].sum(axis=1)
 
     # Calculate the total percentage scored
-    stdans['Total Score %'] = (stdans['total_marks'] / total_possible_marks) * 100
+    stdans['Total Score %'] = (stdans['total_marks'] / total_possible_marks)
 
     # Renaming the columns
     stdans = stdans.rename(columns={
@@ -162,7 +175,6 @@ def process_and_mark_answers(stdans, suggestans):
     submissionData_columns = ['Timestamp', 'Class', 'StudentID', 'Name']
     stdans = stdans[submissionData_columns + question_columns + [spacer_col] + mark_columns + ['total_marks', 'Total Score %']]
     return stdans
-
 
 if __name__ == '__main__':
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
