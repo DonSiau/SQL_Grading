@@ -83,6 +83,9 @@ def process_and_mark_answers(stdans, suggestans):
     for col in question_columns:
         stdans[f'{col}_Mark'] = 0  
 
+    max_score_per_question = 2  # Since the maximum score for each question is 2
+    total_possible_marks = len(question_columns) * max_score_per_question  # Total possible score
+
     for index, row in stdans.iterrows():
         timestamp = row['Timestamp']
         student_class = row['Enter your class']
@@ -138,16 +141,26 @@ def process_and_mark_answers(stdans, suggestans):
     spacer_col = 'marked->'
     stdans[spacer_col] = ''
     mark_columns = [col for col in stdans.columns if col.endswith('_Mark')]
+    
     # Adding the marks to get the total mark
-    stdans['total_marks'] = stdans[mark_columns].sum(axis=1)  
+    stdans['total_marks'] = stdans[mark_columns].sum(axis=1)
+
+    # Calculate the total percentage scored
+    stdans['percentage'] = (stdans['total_marks'] / total_possible_marks) * 100
 
     # Renaming the columns
-    stdans = stdans.rename(columns={'Timestamp':'Timestamp', 'Enter your class':'Class', 'Enter your Student ID':'StudentID','Enter Your FULL Name':'Name'})
+    stdans = stdans.rename(columns={
+        'Timestamp': 'Timestamp', 
+        'Enter your class': 'Class', 
+        'Enter your Student ID': 'StudentID',
+        'Enter Your FULL Name': 'Name'
+    })
 
     # Return the final data
-    submissionData_columns = ['Timestamp', 'Class', 'StudentID','Name']
-    stdans = stdans[submissionData_columns + question_columns + [spacer_col] + mark_columns + ['total_marks']]
+    submissionData_columns = ['Timestamp', 'Class', 'StudentID', 'Name']
+    stdans = stdans[submissionData_columns + question_columns + [spacer_col] + mark_columns + ['total_marks', 'percentage']]
     return stdans
+
 
 if __name__ == '__main__':
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
