@@ -7,7 +7,6 @@
  .center1 {
             margin: auto;
             width: 50%;
-            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
             padding: 10px;
         }
         .center2 {
@@ -27,8 +26,12 @@
     </style>
 </head>
 <body>
+    <div class="center1">
+    <img src="{{ url_for('static', filename='media/images.png') }}" alt="Image description">
+    </div>
+
     <div class="container mt-5 center2">
-        <h2 class="text-center mb-4">Upload Excel Sheets for Grading</h2>
+        <h2 class="text-center mb-4">SQL grading for C207 Database Systems module</h2>
         <div class="center3">
         <form action="/" method="POST" enctype="multipart/form-data">
             <div class="form-group">
