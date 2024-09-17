@@ -91,7 +91,7 @@ def process_and_mark_answers(stdans, suggestans):
     for index, row in stdans.iterrows():
         timestamp = row['Timestamp']
         student_class = row['Enter your class']
-        student_ID = row['Enter your ID']
+        student_ID = row['Enter your Student ID']
         student_Name = row['Enter Your FULL Name']
         for col in question_columns:
             # Extract student's answer
@@ -148,7 +148,7 @@ def process_and_mark_answers(stdans, suggestans):
     stdans['total_marks'] = stdans[mark_columns].sum(axis=1)
 
     # Calculate the total percentage scored
-    stdans['percentage'] = (stdans['total_marks'] / total_possible_marks) * 100
+    stdans['Total Score %'] = (stdans['total_marks'] / total_possible_marks) * 100
 
     # Renaming the columns
     stdans = stdans.rename(columns={
@@ -160,7 +160,7 @@ def process_and_mark_answers(stdans, suggestans):
 
     # Return the final data
     submissionData_columns = ['Timestamp', 'Class', 'StudentID', 'Name']
-    stdans = stdans[submissionData_columns + question_columns + [spacer_col] + mark_columns + ['total_marks', 'percentage']]
+    stdans = stdans[submissionData_columns + question_columns + [spacer_col] + mark_columns + ['total_marks', 'Total Score %']]
     return stdans
 
 
