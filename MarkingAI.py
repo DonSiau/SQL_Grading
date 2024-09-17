@@ -7,6 +7,8 @@ import time
 app = Flask(__name__)
 app.secret_key = "secret_key"  # Required to use Flask's flash messaging
 
+#Test
+
 # Use absolute path for UPLOAD_FOLDER
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER

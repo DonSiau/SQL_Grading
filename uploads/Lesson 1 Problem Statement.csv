@@ -1,0 +1,17 @@
+"Timestamp","Enter your class","Enter your ID","Q1)","Q2)","Q3)
+"
+"2024/09/16 11:22:29 am GMT+8","W66C","22001326","","",""
+"2024/09/16 11:26:48 am GMT+8","W66E","22001329","SELECT title FROM book WHERE quantity_available = 2;","SELECT publisher_adess,  publisher_name FROM publisher WHERE publisher_country != 'usa'; ","SELECT isbn, title, language, type 
+FROM book 
+WHERE language != 'english' 
+AND type = 'ebook' OR type = 'audio';
+"
+"2024/09/16 11:29:13 am GMT+8","W66E","22001332","SELECT title 
+FROM book 
+WHERE NOT quantity_available > 0;","SELECT publisher_name, publisher_address 
+FROM publisher 
+WHERE publisher_country <> 'usa';","SELECT isbn, title, language, type 
+FROM book 
+WHERE language != 'english' 
+AND type IN ('ebook', 'audio');"
+"2024/09/16 11:30:29 am GMT+8","W66C","22001291","SELECT title FROM book WHERE quantity_available = 0;","SELECT publisher_address,  publisher_name FROM publisher WHERE publisher_country != 'usa'; ","SELECT isbn, title, language, type FROM book WHERE language <> 'english' AND ( type = 'ebook' OR type = 'audio');"
