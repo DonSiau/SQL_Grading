@@ -131,7 +131,7 @@ def process_and_mark_answers(stdans, suggestans):
             
             # Run the AI
             payload = {
-                "model": "nousresearch/hermes-3-llama-3.1-405b",  # Make sure to use an instruct model, not a chat model https://openrouter.ai/
+                "model": "nousresearch/hermes-3-llama-3.1-405b:free",  # Make sure to use an instruct model, not a chat model https://openrouter.ai/
                 "messages": [
                     {"role": "user", "content": prompt}
                 ]
